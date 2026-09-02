@@ -1,0 +1,30 @@
+@layer utilities {
+    .content-auto { content-visibility: auto; }
+    .card-hover { @apply transition-all duration-300 hover:shadow-hover hover:-translate-y-1; }
+    .nav-link { @apply px-3 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary text-sm md:text-base; }
+    .nav-link.active { @apply bg-primary/10 text-primary font-semibold; }
+    .form-input { @apply w-full px-3 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base; }
+    .form-label { @apply block text-sm font-medium text-neutral-700 mb-1; }
+    .btn { @apply px-4 py-2.5 rounded-lg font-medium transition-all duration-200 text-base; }
+    .btn-primary { @apply bg-primary text-white hover:bg-primary/90; }
+    .btn-secondary { @apply bg-white border border-primary text-primary hover:bg-primary/5; }
+    .btn-success { @apply bg-secondary text-white hover:bg-secondary/90; }
+    .step-active { @apply bg-primary text-white; }
+    .step-done { @apply bg-secondary text-white; }
+    .file-zone { @apply border-2 border-dashed border-neutral-300 rounded-lg p-4 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all; }
+    .status-badge { @apply px-2 py-0.5 rounded-full text-xs font-medium; }
+}
+
+input[type="file"] { @apply text-sm; }
+
+.pdf-surat { font-family: 'Inter', sans-serif; color: #000; line-height: 1.5; }
+.pdf-surat .kop { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+.pdf-surat .kop h2 { margin: 0; font-size: 18px; font-weight: bold; }
+.pdf-surat .isi { font-size: 13px; }
+.pdf-surat .isi table { width: 100%; margin: 10px 0; border-collapse: collapse; }
+.pdf-surat .isi table td { padding: 4px 0; vertical-align: top; }
+.pdf-surat .isi table td:first-child { width: 140px; font-weight: 600; }
+.pdf-surat .ttd { margin-top: 40px; display: flex; justify-content: space-between; }
+.pdf-surat .ttd-box { text-align: center; width: 180px; }
+.pdf-surat .ttd-img { height: 60px; margin: 4px 0; }
+.pdf-surat .no-surat { text-align: right; font-size: 11px; margin-bottom: 8px; }
