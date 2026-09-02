@@ -1,8 +1,10 @@
-let daftarSurat = [];
-let nomorUrutan = 1;
-let peranAktif = null;
+let penggunaSekarang = null;
+let peranPengguna = 'warga';
+let dataSementara = {};
 
-// NAVIGASI
+// =============================================
+// NAVIGASI HALAMAN
+// =============================================
 document.querySelectorAll('[data-page]').forEach(link => {
     link.addEventListener('click', e => {
         e.preventDefault();
@@ -10,93 +12,171 @@ document.querySelectorAll('[data-page]').forEach(link => {
         link.classList.add('active');
         const halaman = link.dataset.page;
         document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-        const konten = document.getElementById(`page-${halaman}`);
-        if (konten) konten.classList.remove('hidden');
+        document.getElementById(`page-${halaman}`).classList.remove('hidden');
         document.getElementById('mobileMenu').classList.add('hidden');
+        if (halaman === 'verifikasi') muatDaftarSurat();
     });
 });
+
 document.querySelectorAll('[data-goto]').forEach(link => {
     link.addEventListener('click', e => {
         e.preventDefault();
         document.querySelectorAll('[data-page]').forEach(l => l.classList.remove('active'));
-        document.querySelector(`[data-page="${link.dataset.goto}"]`)?.classList.add('active');
+        document.querySelector(`[data-page="${link.dataset.goto}"]`).classList.add('active');
         document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-        document.getElementById(`page-${link.dataset.goto}`)?.classList.remove('hidden');
+        document.getElementById(`page-${link.dataset.goto}`).classList.remove('hidden');
     });
 });
-document.getElementById('menuToggle').addEventListener('click', () => {
+
+document.getElementById('menuToggle').onclick = () => {
     document.getElementById('mobileMenu').classList.toggle('hidden');
-});
+};
 
-// MASUK / KELUAR
-function masukPengurus() {
-    peranAktif = 'pengurus';
-    document.getElementById('menuVerifikasi').style.display = 'block';
-    document.getElementById('menuVerifikasiMobile').style.display = 'block';
-    document.getElementById('btnMasukWarga').classList.add('hidden');
-    document.getElementById('btnMasukPengurus').classList.add('hidden');
-    document.getElementById('btnKeluar').classList.remove('hidden');
-    document.getElementById('btnMasukWargaMobile').classList.add('hidden');
-    document.getElementById('btnMasukPengurusMobile').classList.add('hidden');
-    document.getElementById('btnKeluarMobile').classList.remove('hidden');
-    alert('✅ Masuk sebagai Pengurus berhasil!');
+// =============================================
+// AUTENTIKASI: DAFTAR & MASUK
+// =============================================
+async function cekSesi() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        penggunaSekarang = session.user;
+        await muatDataPengguna();
+        tampilkanSudahMasuk();
+    }
 }
-function masukWarga() {
-    peranAktif = 'warga';
+
+async function muatDataPengguna() {
+    const { data, error } = await supabase
+        .from('pengguna')
+        .select('*')
+        .eq('id', penggunaSekarang.id)
+        .single();
+    
+    if (data) {
+        peranPengguna = data.peran;
+        if (peranPengguna.includes('pengurus') || peranPengguna === 'admin') {
+            document.getElementById('menuVerifikasi').style.display = 'block';
+            document.getElementById('menuVerifikasiMobile').style.display = 'block';
+        }
+    }
+}
+
+function tampilkanSudahMasuk() {
+    document.getElementById('btnMasuk').classList.add('hidden');
+    document.getElementById('btnDaftar').classList.add('hidden');
+    document.getElementById('btnKeluar').classList.remove('hidden');
+    document.getElementById('namaPengguna').textContent = penggunaSekarang?.email || 'Pengguna';
+    document.getElementById('namaPengguna').classList.remove('hidden');
+    // Mobile
+    document.getElementById('btnMasukMobile').classList.add('hidden');
+    document.getElementById('btnDaftarMobile').classList.add('hidden');
+    document.getElementById('btnKeluarMobile').classList.remove('hidden');
+    document.getElementById('namaPenggunaMobile').textContent = penggunaSekarang?.email || 'Pengguna';
+    document.getElementById('namaPenggunaMobile').classList.remove('hidden');
+}
+
+function tampilkanBelumMasuk() {
+    penggunaSekarang = null;
+    peranPengguna = 'warga';
     document.getElementById('menuVerifikasi').style.display = 'none';
     document.getElementById('menuVerifikasiMobile').style.display = 'none';
-    document.getElementById('btnMasukWarga').classList.add('hidden');
-    document.getElementById('btnMasukPengurus').classList.add('hidden');
-    document.getElementById('btnKeluar').classList.remove('hidden');
-    document.getElementById('btnMasukWargaMobile').classList.add('hidden');
-    document.getElementById('btnMasukPengurusMobile').classList.add('hidden');
-    document.getElementById('btnKeluarMobile').classList.remove('hidden');
-    alert('✅ Masuk sebagai Warga berhasil!');
-}
-function keluar() {
-    peranAktif = null;
-    document.getElementById('menuVerifikasi').style.display = 'none';
-    document.getElementById('menuVerifikasiMobile').style.display = 'none';
-    document.getElementById('btnMasukWarga').classList.remove('hidden');
-    document.getElementById('btnMasukPengurus').classList.remove('hidden');
+    document.getElementById('btnMasuk').classList.remove('hidden');
+    document.getElementById('btnDaftar').classList.remove('hidden');
     document.getElementById('btnKeluar').classList.add('hidden');
-    document.getElementById('btnMasukWargaMobile').classList.remove('hidden');
-    document.getElementById('btnMasukPengurusMobile').classList.remove('hidden');
+    document.getElementById('namaPengguna').classList.add('hidden');
+    // Mobile
+    document.getElementById('btnMasukMobile').classList.remove('hidden');
+    document.getElementById('btnDaftarMobile').classList.remove('hidden');
     document.getElementById('btnKeluarMobile').classList.add('hidden');
-    alert('✅ Berhasil Keluar');
+    document.getElementById('namaPenggunaMobile').classList.add('hidden');
 }
-document.getElementById('btnMasukWarga').onclick = masukWarga;
-document.getElementById('btnMasukPengurus').onclick = masukPengurus;
-document.getElementById('btnKeluar').onclick = keluar;
-document.getElementById('btnMasukWargaMobile').onclick = masukWarga;
-document.getElementById('btnMasukPengurusMobile').onclick = masukPengurus;
-document.getElementById('btnKeluarMobile').onclick = keluar;
 
-// PREVIEW NAMA FILE
+// Tombol Auth
+let modeModal = 'masuk';
+document.getElementById('btnMasuk').onclick = () => {
+    modeModal = 'masuk';
+    document.getElementById('judulModal').textContent = 'Masuk ke SiLAWA';
+    document.getElementById('kolomNama').classList.add('hidden');
+    document.getElementById('modalMasuk').classList.remove('hidden');
+};
+document.getElementById('btnDaftar').onclick = () => {
+    modeModal = 'daftar';
+    document.getElementById('judulModal').textContent = 'Daftar Akun SiLAWA';
+    document.getElementById('kolomNama').classList.remove('hidden');
+    document.getElementById('modalMasuk').classList.remove('hidden');
+};
+document.getElementById('btnMasukMobile').onclick = () => document.getElementById('btnMasuk').click();
+document.getElementById('btnDaftarMobile').onclick = () => document.getElementById('btnDaftar').click();
+document.getElementById('tutupModal').onclick = () => {
+    document.getElementById('modalMasuk').classList.add('hidden');
+    document.getElementById('formAuth').reset();
+};
+
+// Proses Auth
+document.getElementById('formAuth').onsubmit = async e => {
+    e.preventDefault();
+    const email = document.getElementById('authEmail').value.trim();
+    const sandi = document.getElementById('authSandi').value;
+    
+    if (modeModal === 'daftar') {
+        const nama = document.getElementById('authNama').value.trim();
+        const nik = document.getElementById('authNik').value.trim();
+        if (!nama || nik.length !== 16) { alert('Lengkapi Nama & NIK 16 digit!'); return; }
+
+        const { data, error } = await supabase.auth.signUp({ email, password: sandi });
+        if (error) return alert('Daftar Gagal: ' + error.message);
+
+        // Simpan data pengguna
+        await supabase.from('pengguna').insert([{
+            id: data.user.id, nama_lengkap: nama, nik: nik, peran: 'warga'
+        }]);
+        alert('✅ Daftar Berhasil! Cek email untuk konfirmasi.');
+    } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password: sandi });
+        if (error) return alert('Gagal Masuk: ' + error.message);
+        alert('✅ Berhasil Masuk!');
+    }
+    document.getElementById('modalMasuk').classList.add('hidden');
+    document.getElementById('formAuth').reset();
+    await cekSesi();
+};
+
+// Keluar
+document.getElementById('btnKeluar').onclick = async () => {
+    await supabase.auth.signOut();
+    tampilkanBelumMasuk();
+    alert('✅ Berhasil Keluar');
+};
+document.getElementById('btnKeluarMobile').onclick = () => document.getElementById('btnKeluar').click();
+
+// =============================================
+// UPLOAD PREVIEW
+// =============================================
 function pasangPreview(idInput, idPreview) {
     const input = document.getElementById(idInput);
-    const preview = document.getElementById(idPreview);
-    if (!input || !preview) return;
-    input.addEventListener('change', () => {
+    const prev = document.getElementById(idPreview);
+    if (!input || !prev) return;
+    input.onchange = () => {
         if (input.files[0]) {
-            preview.innerHTML = `<i class="fa fa-check-circle text-green-500 text-xl mb-1"></i><p class="text-green-600 text-sm">${input.files[0].name}</p>`;
+            prev.innerHTML = `<i class="fa fa-check-circle text-green-500 text-xl mb-1"></i><p class="text-green-600 text-sm">${input.files[0].name}</p>`;
         } else {
-            preview.innerHTML = `<i class="fa fa-cloud-upload text-2xl text-gray-400 mb-1"></i><p>Klik pilih file</p>`;
+            prev.innerHTML = `<i class="fa fa-cloud-upload text-2xl text-gray-400"></i><p>Klik pilih file</p>`;
         }
-    });
+    };
 }
-pasangPreview('fileKtp', 'previewKtp');
-pasangPreview('fileKk', 'previewKk');
-pasangPreview('fileLain', 'previewLain');
+pasangPreview('fileKtp', 'prevKtp');
+pasangPreview('fileKk', 'prevKk');
+pasangPreview('fileLain', 'prevLain');
 
+// =============================================
 // LANGKAH FORMULIR
+// =============================================
 function tampilLangkah(no) {
     for (let i=1; i<=5; i++) {
         const el = document.getElementById(`langkah-${i}`);
         if (el) {
-            if (i < no) { el.className = 'w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-green-600 text-white text-sm'; }
-            else if (i === no) { el.className = 'w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-blue-600 text-white text-sm'; }
-            else { el.className = 'w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-gray-200 text-gray-500 text-sm'; }
+            if (i < no) el.className = 'w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-green-600 text-white text-sm';
+            else if (i === no) el.className = 'w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-blue-600 text-white text-sm';
+            else el.className = 'w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-gray-200 text-gray-500 text-sm';
         }
     }
     document.getElementById('bagian-wilayah').classList.toggle('hidden', no!==1);
@@ -108,90 +188,16 @@ function tampilLangkah(no) {
 tampilLangkah(1);
 
 document.getElementById('btnLanjut1').onclick = () => {
-    const p = document.getElementById('provinsi').value;
-    const k = document.getElementById('kabupaten').value;
-    const kec = document.getElementById('kecamatan').value;
-    const kel = document.getElementById('kelurahan').value;
-    const rw = document.getElementById('rw').value;
-    const rt = document.getElementById('rt').value;
-    const al = document.getElementById('alamat').value;
-    if (!p||!k||!kec||!kel||!rw||!rt||!al) { alert('Lengkapi data wilayah!'); return; }
+    const f = ['provinsi','kabupaten','kecamatan','kelurahan','rw','rt','alamatLengkap'];
+    if (f.some(id=>!document.getElementById(id).value)) return alert('Lengkapi semua data wilayah!');
     tampilLangkah(2);
 };
 document.getElementById('btnKembali1').onclick = () => tampilLangkah(1);
 
 document.getElementById('btnLanjut2').onclick = () => {
-    if (!document.getElementById('jenisSurat').value) { alert('Pilih jenis surat!'); return; }
+    if (!document.getElementById('jenisSurat').value) return alert('Pilih jenis surat!');
     tampilLangkah(3);
 };
 document.getElementById('btnKembali2').onclick = () => tampilLangkah(2);
 
-document.getElementById('btnLanjut3').onclick = () => {
-    const nik = document.getElementById('nik').value;
-    if (!document.getElementById('nama').value || nik.length!==16) { alert('Nama wajib diisi & NIK harus 16 digit!'); return; }
-    tampilLangkah(4);
-};
-document.getElementById('btnKembali3').onclick = () => tampilLangkah(3);
-
-document.getElementById('btnLanjut4').onclick = () => {
-    if (!document.getElementById('fileKtp').files[0] || !document.getElementById('fileKk').files[0]) { alert('Unggah KTP & KK!'); return; }
-    tampilRingkasan();
-    tampilLangkah(5);
-};
-document.getElementById('btnKembali4').onclick = () => tampilLangkah(4);
-
-function tampilRingkasan() {
-    const jenis = document.getElementById('jenisSurat').selectedOptions[0].text;
-    document.getElementById('ringkasan').innerHTML = `
-        <p><strong>Nomor:</strong> SLW-${String(nomorUrutan).padStart(5,'0')}</p>
-        <p><strong>Nama:</strong> ${document.getElementById('nama').value}</p>
-        <p><strong>NIK:</strong> ${document.getElementById('nik').value}</p>
-        <p><strong>Jenis Surat:</strong> ${jenis}</p>
-        <p><strong>Wilayah:</strong> ${document.getElementById('kelurahan').value}, ${document.getElementById('kecamatan').value} — ${document.getElementById('kabupaten').value}</p>
-        <p><strong>RW/RT:</strong> ${document.getElementById('rw').value} / ${document.getElementById('rt').value}</p>
-    `;
-}
-
-// KIRIM FORMULIR
-document.getElementById('formSurat').addEventListener('submit', e => {
-    e.preventDefault();
-    if (!document.getElementById('setuju').checked) { alert('Centang persetujuan!'); return; }
-    const nomor = `SLW-${String(nomorUrutan).padStart(5,'0')}`;
-    const surat = {
-        nomor,
-        tanggal: new Date().toLocaleDateString('id-ID', {day:'2-digit',month:'long',year:'numeric'}),
-        nama: document.getElementById('nama').value,
-        nik: document.getElementById('nik').value,
-        tempatLahir: document.getElementById('tempatLahir').value,
-        tglLahir: document.getElementById('tglLahir').value,
-        jenisKelamin: document.getElementById('jenisKelamin').value,
-        agama: document.getElementById('agama').value,
-        pekerjaan: document.getElementById('pekerjaan').value || '-',
-        alamat: document.getElementById('alamat').value,
-        jenisSurat: document.getElementById('jenisSurat').selectedOptions[0].text,
-        keperluan: document.getElementById('keperluan').value || '-',
-        provinsi: document.getElementById('provinsi').value,
-        kabupaten: document.getElementById('kabupaten').value,
-        kecamatan: document.getElementById('kecamatan').value,
-        kelurahan: document.getElementById('kelurahan').value,
-        rw: document.getElementById('rw').value,
-        rt: document.getElementById('rt').value,
-        status: 'Menunggu'
-    };
-    daftarSurat.push(surat);
-    nomorUrutan++;
-    perbaruiDaftarSurat();
-    alert(`✅ Pengajuan Berhasil!\n\nNomor: ${nomor}\nSimpan nomor ini untuk cek status.`);
-    tampilLangkah(1);
-    document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-    document.getElementById('page-beranda').classList.remove('hidden');
-    document.querySelectorAll('[data-page]').forEach(l => l.classList.remove('active'));
-    document.querySelector('[data-page="beranda"]').classList.add('active');
-    e.target.reset();
-});
-
-// DAFTAR SURAT UNTUK PENGURUS
-function perbaruiDaftarSurat() {
-    const el = document.getElementById('daftarSurat');
-    if (daftarSurat.length === 0) {
-        el.innerHTML = `<div class="text-center text-gray-500 py-8"><i class="fa
+document.getElementById('btnLanjut3').on
