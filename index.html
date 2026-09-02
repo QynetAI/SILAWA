@@ -6,56 +6,10 @@
     <title>SiLAWA — Sistem Informasi Layanan Warga</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        primary: '#165DFF',
-                        secondary: '#00B42A',
-                        accent: '#FF7D00',
-                        neutral: {
-                            50: '#F7F8FA', 100: '#F5F7FA', 200: '#E5E6EB', 300: '#C9CDD4',
-                            400: '#86909C', 600: '#4E5969', 800: '#1D2129',
-                        }
-                    },
-                    boxShadow: {
-                        soft: '0 4px 20px rgba(0,0,0,0.06)',
-                        hover: '0 8px 30px rgba(22,93,255,0.12)',
-                    }
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .content-auto { content-visibility: auto; }
-            .card-hover { @apply transition-all duration-300 hover:shadow-hover hover:-translate-y-1; }
-            .nav-link { @apply px-3 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary text-sm md:text-base; }
-            .nav-link.active { @apply bg-primary/10 text-primary font-semibold; }
-            .form-input { @apply w-full px-3 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base; }
-            .form-label { @apply block text-sm font-medium text-neutral-700 mb-1; }
-            .btn { @apply px-4 py-2.5 rounded-lg font-medium transition-all duration-200 text-base; }
-            .btn-primary { @apply bg-primary text-white hover:bg-primary/90; }
-            .btn-secondary { @apply bg-white border border-primary text-primary hover:bg-primary/5; }
-            .btn-success { @apply bg-secondary text-white hover:bg-secondary/90; }
-            .btn-warning { @apply bg-amber-500 text-white hover:bg-amber-600; }
-            .btn-danger { @apply bg-red-500 text-white hover:bg-red-600; }
-            .step-active { @apply bg-primary text-white; }
-            .step-done { @apply bg-secondary text-white; }
-            .file-zone { @apply border-2 border-dashed border-neutral-300 rounded-lg p-4 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all; }
-            .status-badge { @apply px-2 py-0.5 rounded-full text-xs font-medium; }
-        }
-        input[type="file"] { @apply text-sm; }
-        @media (max-width: 640px) {
-            .container { @apply px-3; }
-            h2 { @apply text-xl !important; }
-        }
-    </style>
+    <script src="./config.js"></script>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body class="font-sans bg-neutral-100 text-neutral-800 min-h-screen flex flex-col">
 
@@ -64,10 +18,10 @@
         <div class="container mx-auto px-3 md:px-6">
             <div class="flex items-center justify-between py-3">
                 <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white text-base font-bold shrink-0">SI</div>
+                    <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white text-base font-bold shrink-0">SL</div>
                     <div>
-                        <h1 class="text-base md:text-lg font-bold text-primary">SILAT SURAT</h1>
-                        <p class="text-xs text-neutral-600 hidden sm:block">Layanan Surat — Seluruh Indonesia</p>
+                        <h1 class="text-base md:text-lg font-bold text-primary">SiLAWA</h1>
+                        <p class="text-xs text-neutral-600 hidden sm:block">Sistem Informasi Layanan Warga</p>
                     </div>
                 </div>
                 <nav class="hidden md:flex items-center gap-1">
@@ -75,7 +29,7 @@
                     <a href="#" class="nav-link" data-page="pengajuan">Ajukan Surat</a>
                     <a href="#" class="nav-link" data-page="status">Cek Status</a>
                     <a href="#" class="nav-link" data-page="pengumuman">Pengumuman</a>
-                    <a href="#" class="nav-link" data-page="verifikasi" id="menuVerifikasi" style="display:none;">Verifikasi Surat</a>
+                    <a href="#" class="nav-link" data-page="verifikasi" id="menuVerifikasi" style="display:none;">Verifikasi & PDF</a>
                 </nav>
                 <div class="flex items-center gap-2">
                     <div class="hidden md:flex gap-2">
@@ -83,7 +37,7 @@
                             <i class="fa fa-user mr-1"></i> Masuk Warga
                         </button>
                         <button id="btnMasukPengurus" class="px-3 py-2 bg-secondary text-white rounded-lg font-medium text-sm hover:bg-secondary/90">
-                            <i class="fa fa-shield mr-1"></i> Masuk Pengurus RT/RW
+                            <i class="fa fa-shield mr-1"></i> Masuk Pengurus
                         </button>
                         <button id="btnKeluar" class="px-3 py-2 bg-neutral-100 text-neutral-700 rounded-lg font-medium text-sm hover:bg-neutral-200 hidden">
                             <i class="fa fa-sign-out mr-1"></i> Keluar
@@ -100,13 +54,13 @@
                     <a href="#" class="nav-link" data-page="pengajuan">Ajukan Surat</a>
                     <a href="#" class="nav-link" data-page="status">Cek Status</a>
                     <a href="#" class="nav-link" data-page="pengumuman">Pengumuman</a>
-                    <a href="#" class="nav-link" data-page="verifikasi" id="menuVerifikasiMobile" style="display:none;">Verifikasi Surat</a>
+                    <a href="#" class="nav-link" data-page="verifikasi" id="menuVerifikasiMobile" style="display:none;">Verifikasi & PDF</a>
                     <div class="flex flex-col gap-2 mt-3 pt-3 border-t">
                         <button id="btnMasukWargaMobile" class="px-3 py-2 bg-primary text-white rounded-lg font-medium text-sm">
                             <i class="fa fa-user mr-1"></i> Masuk Warga
                         </button>
                         <button id="btnMasukPengurusMobile" class="px-3 py-2 bg-secondary text-white rounded-lg font-medium text-sm">
-                            <i class="fa fa-shield mr-1"></i> Masuk Pengurus RT/RW
+                            <i class="fa fa-shield mr-1"></i> Masuk Pengurus
                         </button>
                         <button id="btnKeluarMobile" class="px-3 py-2 bg-neutral-100 text-neutral-700 rounded-lg font-medium text-sm hidden">
                             <i class="fa fa-sign-out mr-1"></i> Keluar
@@ -119,17 +73,17 @@
 
     <main class="flex-grow container mx-auto px-3 md:px-6 py-5 md:py-8">
 
-        <!-- ============= HALAMAN BERANDA ============= -->
+        <!-- BERANDA -->
         <section id="page-beranda" class="page-content">
             <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-5 md:p-8 mb-8">
                 <div class="grid md:grid-cols-2 gap-6 items-center">
                     <div>
                         <h2 class="text-xl md:text-3xl font-bold leading-tight mb-3">
                             Layanan Surat Pengantar<br>
-                            <span class="text-primary">Seluruh Indonesia</span>
+                            <span class="text-primary">SiLAWA — Seluruh Indonesia</span>
                         </h2>
                         <p class="text-neutral-600 text-base mb-5">
-                            Ajukan surat secara online dari mana saja. Pilih Provinsi → Kabupaten → Kecamatan → Kelurahan → RT/RW. Lengkapi persyaratan & unggah dokumen. Hasil PDF resmi dengan tanda tangan elektronik.
+                            Ajukan surat secara online dari mana saja. Pilih Provinsi → Kabupaten → Kecamatan → Kelurahan → RT/RW. Lengkapi persyaratan & unggah dokumen. Hasil PDF resmi dengan <strong>Tanda Tangan Elektronik</strong> otomatis.
                         </p>
                         <div class="flex flex-wrap gap-2">
                             <a href="#" data-goto="pengajuan" class="btn btn-primary goto-page text-sm">
@@ -141,11 +95,10 @@
                         </div>
                     </div>
                     <div class="hidden md:flex justify-center">
-                        <img src="https://picsum.photos/id/42/600/400" alt="Layanan Surat Warga" class="rounded-xl shadow-soft w-full max-w-md object-cover">
+                        <img src="https://picsum.photos/id/42/600/400" alt="SiLAWA" class="rounded-xl shadow-soft w-full max-w-md object-cover">
                     </div>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
                 <div class="bg-white rounded-xl p-4 shadow-soft card-hover">
                     <p class="text-neutral-600 text-sm">Provinsi</p>
@@ -156,15 +109,14 @@
                     <h3 class="text-2xl font-bold text-secondary mt-1">15+</h3>
                 </div>
                 <div class="bg-white rounded-xl p-4 shadow-soft card-hover">
-                    <p class="text-neutral-600 text-sm">Unggah Dokumen</p>
+                    <p class="text-neutral-600 text-sm">PDF Otomatis</p>
                     <h3 class="text-2xl font-bold text-accent mt-1">✓</h3>
                 </div>
                 <div class="bg-white rounded-xl p-4 shadow-soft card-hover">
-                    <p class="text-neutral-600 text-sm">PDF + TTE</p>
+                    <p class="text-neutral-600 text-sm">TTE Resmi</p>
                     <h3 class="text-2xl font-bold text-neutral-800 mt-1">✓</h3>
                 </div>
             </div>
-
             <div class="bg-white rounded-xl shadow-soft p-4 md:p-6">
                 <h3 class="text-lg font-semibold mb-4">📋 Persyaratan Umum</h3>
                 <div class="grid md:grid-cols-3 gap-3 text-sm">
@@ -184,207 +136,66 @@
             </div>
         </section>
 
-        <!-- ============= HALAMAN PENGAJUAN SURAT ============= -->
+        <!-- PENGAJUAN SURAT -->
         <section id="page-pengajuan" class="page-content hidden">
             <div class="max-w-4xl mx-auto">
                 <div class="flex justify-between mb-6 relative">
                     <div class="absolute top-5 left-6 right-6 h-0.5 bg-neutral-200 -z-10"></div>
-                    <div class="text-center">
-                        <div id="langkah-1" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 step-active text-sm">1</div>
-                        <p class="text-xs">Wilayah</p>
-                    </div>
-                    <div class="text-center">
-                        <div id="langkah-2" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">2</div>
-                        <p class="text-xs">Surat</p>
-                    </div>
-                    <div class="text-center">
-                        <div id="langkah-3" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">3</div>
-                        <p class="text-xs">Data Diri</p>
-                    </div>
-                    <div class="text-center">
-                        <div id="langkah-4" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">4</div>
-                        <p class="text-xs">Unggah</p>
-                    </div>
-                    <div class="text-center">
-                        <div id="langkah-5" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">5</div>
-                        <p class="text-xs">Kirim</p>
-                    </div>
+                    <div class="text-center"><div id="langkah-1" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 step-active text-sm">1</div><p class="text-xs">Wilayah</p></div>
+                    <div class="text-center"><div id="langkah-2" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">2</div><p class="text-xs">Surat</p></div>
+                    <div class="text-center"><div id="langkah-3" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">3</div><p class="text-xs">Data Diri</p></div>
+                    <div class="text-center"><div id="langkah-4" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">4</div><p class="text-xs">Unggah</p></div>
+                    <div class="text-center"><div id="langkah-5" class="w-9 h-9 rounded-full flex items-center justify-center mx-auto mb-1 bg-neutral-200 text-neutral-500 text-sm">5</div><p class="text-xs">Kirim</p></div>
                 </div>
-
                 <div class="bg-white rounded-xl shadow-soft p-4 md:p-6">
-                    <h2 class="text-xl font-bold mb-5 text-center">Formulir Pengajuan Surat</h2>
+                    <h2 class="text-xl font-bold mb-5 text-center">Formulir Pengajuan Surat — SiLAWA</h2>
                     <form id="formSurat" class="space-y-4">
 
-                        <!-- LANGKAH 1: DATA WILAYAH LENGKAP -->
+                        <!-- Langkah 1: Wilayah -->
                         <div id="bagian-wilayah" class="space-y-4">
                             <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2">📍 Langkah 1: Data Wilayah Pemohon</h3>
                             <div class="grid md:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="form-label">Nama Provinsi <span class="text-red-500">*</span></label>
-                                    <select id="provinsi" class="form-input" required>
-                                        <option value="">-- Pilih Provinsi --</option>
-                                        <option value="Nanggroe Aceh Darussalam">Nanggroe Aceh Darussalam</option>
-                                        <option value="Sumatera Utara">Sumatera Utara</option>
-                                        <option value="Sumatera Barat">Sumatera Barat</option>
-                                        <option value="Riau">Riau</option>
-                                        <option value="Kepulauan Riau">Kepulauan Riau</option>
-                                        <option value="Jambi">Jambi</option>
-                                        <option value="Sumatera Selatan">Sumatera Selatan</option>
-                                        <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
-                                        <option value="Bengkulu">Bengkulu</option>
-                                        <option value="Lampung">Lampung</option>
-                                        <option value="DKI Jakarta">DKI Jakarta</option>
-                                        <option value="Jawa Barat">Jawa Barat</option>
-                                        <option value="Banten">Banten</option>
-                                        <option value="Jawa Tengah">Jawa Tengah</option>
-                                        <option value="DI Yogyakarta">DI Yogyakarta</option>
-                                        <option value="Jawa Timur">Jawa Timur</option>
-                                        <option value="Bali">Bali</option>
-                                        <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
-                                        <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
-                                        <option value="Kalimantan Barat">Kalimantan Barat</option>
-                                        <option value="Kalimantan Tengah">Kalimantan Tengah</option>
-                                        <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-                                        <option value="Kalimantan Timur">Kalimantan Timur</option>
-                                        <option value="Kalimantan Utara">Kalimantan Utara</option>
-                                        <option value="Sulawesi Utara">Sulawesi Utara</option>
-                                        <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-                                        <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                                        <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
-                                        <option value="Gorontalo">Gorontalo</option>
-                                        <option value="Sulawesi Barat">Sulawesi Barat</option>
-                                        <option value="Maluku">Maluku</option>
-                                        <option value="Maluku Utara">Maluku Utara</option>
-                                        <option value="Papua">Papua</option>
-                                        <option value="Papua Barat">Papua Barat</option>
-                                        <option value="Papua Selatan">Papua Selatan</option>
-                                        <option value="Papua Tengah">Papua Tengah</option>
-                                        <option value="Papua Pegunungan">Papua Pegunungan</option>
-                                        <option value="Papua Barat Daya">Papua Barat Daya</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="form-label">Kabupaten / Kota <span class="text-red-500">*</span></label>
-                                    <select id="kabupaten" class="form-input" required disabled>
-                                        <option value="">-- Pilih Provinsi Dulu --</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="form-label">Kecamatan <span class="text-red-500">*</span></label>
-                                    <select id="kecamatan" class="form-input" required disabled>
-                                        <option value="">-- Pilih Kabupaten Dulu --</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="form-label">Kelurahan / Desa <span class="text-red-500">*</span></label>
-                                    <select id="kelurahan" class="form-input" required disabled>
-                                        <option value="">-- Pilih Kecamatan Dulu --</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="form-label">RW <span class="text-red-500">*</span></label>
-                                    <select id="rw" class="form-input" required disabled>
-                                        <option value="">-- Pilih Kelurahan Dulu --</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="form-label">RT <span class="text-red-500">*</span></label>
-                                    <select id="rt" class="form-input" required disabled>
-                                        <option value="">-- Pilih RW Dulu --</option>
-                                    </select>
-                                </div>
+                                <div><label class="form-label">Provinsi <span class="text-red-500">*</span></label><select id="provinsi" class="form-input" required><option value="">-- Pilih --</option><option value="Lampung" selected>Lampung</option></select></div>
+                                <div><label class="form-label">Kabupaten/Kota <span class="text-red-500">*</span></label><select id="kabupaten" class="form-input" required><option value="">-- Pilih --</option><option value="Bandar Lampung" selected>Bandar Lampung</option></select></div>
+                                <div><label class="form-label">Kecamatan <span class="text-red-500">*</span></label><select id="kecamatan" class="form-input" required><option value="">-- Pilih --</option><option value="Teluk Betung Utara" selected>Teluk Betung Utara</option></select></div>
+                                <div><label class="form-label">Kelurahan/Desa <span class="text-red-500">*</span></label><select id="kelurahan" class="form-input" required><option value="">-- Pilih --</option><option value="Kedamaian" selected>Kedamaian</option></select></div>
+                                <div><label class="form-label">RW <span class="text-red-500">*</span></label><select id="rw" class="form-input" required><option value="">-- Pilih --</option><option value="RW01" selected>RW01</option></select></div>
+                                <div><label class="form-label">RT <span class="text-red-500">*</span></label><select id="rt" class="form-input" required><option value="">-- Pilih --</option><option value="RT01" selected>RT01</option></select></div>
                             </div>
-                            <div class="md:col-span-2">
-                                <label class="form-label">Alamat Lengkap <span class="text-red-500">*</span></label>
-                                <textarea id="alamatLengkap" rows="2" class="form-input" placeholder="Jalan, Nomor, RT/RW, Kelurahan, Kecamatan, Kabupaten, Provinsi" required></textarea>
-                            </div>
-                            <div class="flex justify-end pt-1">
-                                <button type="button" id="btnLanjutWilayah" class="btn btn-primary text-sm">Lanjut <i class="fa fa-arrow-right ml-1"></i></button>
-                            </div>
+                            <div><label class="form-label">Alamat Lengkap <span class="text-red-500">*</span></label><textarea id="alamatLengkap" rows="2" class="form-input" required></textarea></div>
+                            <div class="flex justify-end pt-1"><button type="button" id="btnLanjutWilayah" class="btn btn-primary text-sm">Lanjut <i class="fa fa-arrow-right ml-1"></i></button></div>
                         </div>
 
-                        <!-- LANGKAH 2: JENIS SURAT -->
+                        <!-- Langkah 2: Jenis Surat -->
                         <div id="bagian-jenis" class="space-y-4 hidden">
                             <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2">📄 Langkah 2: Pilih Jenis Surat</h3>
-                            <div>
-                                <label class="form-label">Jenis Surat yang Diajukan <span class="text-red-500">*</span></label>
-                                <select id="jenisSurat" name="jenisSurat" class="form-input" required>
-                                    <option value="">-- Pilih Jenis Surat --</option>
-                                    <option value="domisili">Surat Keterangan Domisili</option>
-                                    <option value="ktp">Surat Pengantar Pembuatan KTP</option>
-                                    <option value="kk">Surat Pengantar Kartu Keluarga</option>
-                                    <option value="usaha">Surat Keterangan Usaha</option>
-                                    <option value="nikah">Surat Pengantar Nikah</option>
-                                    <option value="belum_nikah">Surat Keterangan Belum Menikah</option>
-                                    <option value="sktm">Surat Keterangan Tidak Mampu (SKTM)</option>
-                                    <option value="pindah">Surat Keterangan Pindah</option>
-                                    <option value="kematian">Surat Keterangan Kematian</option>
-                                    <option value="kelahiran">Surat Keterangan Kelahiran</option>
-                                    <option value="penghasilan">Surat Keterangan Penghasilan</option>
-                                    <option value="catatan_kepolisian">Surat Pengantar Catatan Kepolisian</option>
-                                    <option value="ijin_mendirikan_bangunan">Surat Keterangan Izin Mendirikan Bangunan</option>
-                                    <option value="lainnya">Surat Keterangan Lainnya</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label">Keperluan / Keterangan Tambahan</label>
-                                <textarea name="keperluan" id="keperluan" rows="2" class="form-input" placeholder="Tujuan penerbitan surat..."></textarea>
-                            </div>
+                            <div><label class="form-label">Jenis Surat <span class="text-red-500">*</span></label><select id="jenisSurat" class="form-input" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="domisili">Surat Keterangan Domisili</option>
+                                <option value="ktp">Surat Pengantar KTP</option>
+                                <option value="kk">Surat Pengantar KK</option>
+                                <option value="usaha">Surat Keterangan Usaha</option>
+                                <option value="lainnya">Surat Keterangan Lainnya</option>
+                            </select></div>
+                            <div><label class="form-label">Keperluan</label><textarea id="keperluan" rows="2" class="form-input"></textarea></div>
                             <div class="flex justify-between pt-1">
                                 <button type="button" id="btnKembaliJenis" class="btn btn-secondary text-sm"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
                                 <button type="button" id="btnLanjutJenis" class="btn btn-primary text-sm">Lanjut <i class="fa fa-arrow-right ml-1"></i></button>
                             </div>
                         </div>
 
-                        <!-- LANGKAH 3: DATA DIRI -->
+                        <!-- Langkah 3: Data Diri -->
                         <div id="bagian-diri" class="space-y-4 hidden">
                             <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2">👤 Langkah 3: Data Diri Pemohon</h3>
                             <div class="grid md:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="form-label">Nama Lengkap <span class="text-red-500">*</span></label>
-                                    <input type="text" name="nama" class="form-input" placeholder="Sesuai KTP" required>
-                                </div>
-                                <div>
-                                    <label class="form-label">NIK / No. KTP (16 Digit) <span class="text-red-500">*</span></label>
-                                    <input type="text" name="nik" class="form-input" placeholder="Masukkan 16 digit NIK" maxlength="16" minlength="16" required>
-                                </div>
-                                <div>
-                                    <label class="form-label">Tempat Lahir <span class="text-red-500">*</span></label>
-                                    <input type="text" name="tempatLahir" class="form-input" required>
-                                </div>
-                                <div>
-                                    <label class="form-label">Tanggal Lahir <span class="text-red-500">*</span></label>
-                                    <input type="date" name="tglLahir" class="form-input" required>
-                                </div>
-                                <div>
-                                    <label class="form-label">Jenis Kelamin <span class="text-red-500">*</span></label>
-                                    <select name="jk" class="form-input" required>
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Laki-laki">Laki-laki</option>
-                                        <option value="Perempuan">Perempuan</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="form-label">Agama <span class="text-red-500">*</span></label>
-                                    <select name="agama" class="form-input" required>
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Islam">Islam</option>
-                                        <option value="Kristen">Kristen</option>
-                                        <option value="Katolik">Katolik</option>
-                                        <option value="Hindu">Hindu</option>
-                                        <option value="Buddha">Buddha</option>
-                                        <option value="Khonghucu">Khonghucu</option>
-                                        <option value="Lainnya">Lainnya</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="form-label">Pekerjaan</label>
-                                    <input type="text" name="pekerjaan" class="form-input">
-                                </div>
-                                <div>
-                                    <label class="form-label">No. WhatsApp / HP <span class="text-red-500">*</span></label>
-                                    <input type="tel" name="kontak" class="form-input" placeholder="08xx-xxxx-xxxx" required>
-                                </div>
+                                <div><label class="form-label">Nama Lengkap <span class="text-red-500">*</span></label><input type="text" id="nama" class="form-input" required></div>
+                                <div><label class="form-label">NIK (16 Digit) <span class="text-red-500">*</span></label><input type="text" id="nik" maxlength="16" class="form-input" required></div>
+                                <div><label class="form-label">Tempat Lahir <span class="text-red-500">*</span></label><input type="text" id="tempatLahir" class="form-input" required></div>
+                                <div><label class="form-label">Tanggal Lahir <span class="text-red-500">*</span></label><input type="date" id="tglLahir" class="form-input" required></div>
+                                <div><label class="form-label">Jenis Kelamin <span class="text-red-500">*</span></label><select id="jk" class="form-input" required><option value="">-- Pilih --</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+                                <div><label class="form-label">Agama <span class="text-red-500">*</span></label><select id="agama" class="form-input" required><option value="">-- Pilih --</option><option value="Islam">Islam</option><option value="Kristen">Kristen</option><option value="Katolik">Katolik</option><option value="Hindu">Hindu</option><option value="Buddha">Buddha</option></select></div>
+                                <div><label class="form-label">Pekerjaan</label><input type="text" id="pekerjaan" class="form-input"></div>
+                                <div><label class="form-label">No. WhatsApp <span class="text-red-500">*</span></label><input type="tel" id="kontak" class="form-input" required></div>
                             </div>
                             <div class="flex justify-between pt-1">
                                 <button type="button" id="btnKembaliDiri" class="btn btn-secondary text-sm"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
@@ -392,41 +203,14 @@
                             </div>
                         </div>
 
-                        <!-- LANGKAH 4: UNGGAH DOKUMEN -->
+                        <!-- Langkah 4: Unggah Dokumen -->
                         <div id="bagian-unggah" class="space-y-4 hidden">
-                            <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2">📎 Langkah 4: Unggah Dokumen Persyaratan</h3>
-                            <p class="text-sm text-neutral-600">Format: <strong>JPG, PNG, PDF</strong>. Maksimal ukuran per file: <strong>5 MB</strong>.</p>
+                            <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2">📎 Langkah 4: Unggah Dokumen</h3>
+                            <p class="text-sm text-neutral-600">Format: JPG, PNG, PDF — Maks 5MB</p>
                             <div class="space-y-3">
-                                <div>
-                                    <label class="form-label">Scan/Foto KTP Pemohon <span class="text-red-500">* Wajib</span></label>
-                                    <label class="file-zone block">
-                                        <input type="file" name="dokumen_ktp" accept=".jpg,.jpeg,.png,.pdf" class="hidden" required id="fileKtp">
-                                        <div id="previewKtp" class="text-neutral-500">
-                                            <i class="fa fa-cloud-upload text-2xl mb-2"></i>
-                                            <p>Klik untuk memilih file KTP</p>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div>
-                                    <label class="form-label">Scan/Foto Kartu Keluarga <span class="text-red-500">* Wajib</span></label>
-                                    <label class="file-zone block">
-                                        <input type="file" name="dokumen_kk" accept=".jpg,.jpeg,.png,.pdf" class="hidden" required id="fileKK">
-                                        <div id="previewKK" class="text-neutral-500">
-                                            <i class="fa fa-cloud-upload text-2xl mb-2"></i>
-                                            <p>Klik untuk memilih file KK</p>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div>
-                                    <label class="form-label">Dokumen Pendukung Lainnya (Opsional)</label>
-                                    <label class="file-zone block">
-                                        <input type="file" name="dokumen_lain" accept=".jpg,.jpeg,.png,.pdf" multiple class="hidden" id="fileLain">
-                                        <div id="previewLain" class="text-neutral-500">
-                                            <i class="fa fa-paperclip text-2xl mb-2"></i>
-                                            <p>Unggah berkas tambahan jika diperlukan</p>
-                                        </div>
-                                    </label>
-                                </div>
+                                <div><label class="form-label">KTP <span class="text-red-500">*</span></label><label class="file-zone block"><input type="file" accept=".jpg,.jpeg,.png,.pdf" class="hidden" id="fileKtp"><div id="previewKtp"><i class="fa fa-cloud-upload"></i> Klik pilih file</div></label></div>
+                                <div><label class="form-label">Kartu Keluarga <span class="text-red-500">*</span></label><label class="file-zone block"><input type="file" accept=".jpg,.jpeg,.png,.pdf" class="hidden" id="fileKK"><div id="previewKK"><i class="fa fa-cloud-upload"></i> Klik pilih file</div></label></div>
+                                <div><label class="form-label">Dokumen Lain (Opsional)</label><label class="file-zone block"><input type="file" accept=".jpg,.jpeg,.png,.pdf" class="hidden" id="fileLain"><div id="previewLain"><i class="fa fa-paperclip"></i> Pilih file jika ada</div></label></div>
                             </div>
                             <div class="flex justify-between pt-1">
                                 <button type="button" id="btnKembaliUnggah" class="btn btn-secondary text-sm"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
@@ -434,21 +218,14 @@
                             </div>
                         </div>
 
-                        <!-- LANGKAH 5: KONFIRMASI -->
+                        <!-- Langkah 5: Konfirmasi -->
                         <div id="bagian-konfirmasi" class="space-y-4 hidden">
                             <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2">✅ Langkah 5: Konfirmasi & Ajukan</h3>
-                            <div id="ringkasanData" class="bg-neutral-50 rounded-lg p-3 text-sm space-y-1.5"></div>
-                            <div class="pt-2">
-                                <label class="flex items-start gap-2 cursor-pointer">
-                                    <input type="checkbox" class="mt-1" required>
-                                    <span class="text-sm text-neutral-600">Saya menyatakan data & dokumen yang diunggah benar dan sah. Surat akan diverifikasi dan diterbitkan dalam format PDF bertanda tangan elektronik.</span>
-                                </label>
-                            </div>
+                            <div id="ringkasanData" class="bg-neutral-50 rounded-lg p-3 text-sm space-y-1"></div>
+                            <label class="flex items-start gap-2"><input type="checkbox" class="mt-1" required><span class="text-sm text-neutral-600">Data benar & sah — siap dibuat PDF dengan Tanda Tangan Elektronik.</span></label>
                             <div class="flex flex-col gap-2 pt-2">
                                 <button type="button" id="btnKembaliKonfirmasi" class="btn btn-secondary"><i class="fa fa-arrow-left mr-1"></i> Ubah Data</button>
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fa fa-paper-plane mr-2"></i> Ajukan Surat Sekarang
-                                </button>
+                                <button type="submit" class="btn btn-success"><i class="fa fa-paper-plane mr-2"></i> Ajukan Surat Sekarang</button>
                             </div>
                         </div>
                     </form>
@@ -456,311 +233,74 @@
             </div>
         </section>
 
-        <!-- ============= HALAMAN CEK STATUS ============= -->
+        <!-- CEK STATUS -->
         <section id="page-status" class="page-content hidden">
             <div class="max-w-xl mx-auto bg-white rounded-xl shadow-soft p-4 md:p-6">
-                <h2 class="text-xl font-bold mb-5 text-center">Cek Status Pengajuan Surat</h2>
-                <p class="text-neutral-600 text-center mb-4 text-sm">Masukkan Nomor Pengajuan atau NIK untuk melacak</p>
+                <h2 class="text-xl font-bold mb-5 text-center">Cek Status Pengajuan</h2>
                 <div class="flex flex-col sm:flex-row gap-2 mb-4">
                     <input type="text" id="cariNomor" class="form-input flex-1" placeholder="Nomor Pengajuan atau NIK">
-                    <button id="btnCariStatus" class="btn btn-primary whitespace-nowrap"><i class="fa fa-search"></i> Cek</button>
+                    <button id="btnCariStatus" class="btn btn-primary"><i class="fa fa-search"></i> Cek</button>
                 </div>
-                <div id="hasilCariStatus" class="mt-4 text-center text-neutral-500 text-sm">
-                    Masukkan nomor pengajuan atau NIK di atas
-                </div>
+                <div id="hasilCariStatus" class="mt-4 text-center text-neutral-500 text-sm">Masukkan nomor atau NIK</div>
             </div>
         </section>
 
-        <!-- ============= HALAMAN PENGUMUMAN ============= -->
+        <!-- PENGUMUMAN -->
         <section id="page-pengumuman" class="page-content hidden">
             <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-soft p-4 md:p-6">
-                <h2 class="text-xl font-bold mb-5">Pengumuman Terbaru</h2>
-                <div class="space-y-3">
-                    <div class="border border-neutral-200 rounded-lg p-4">
-                        <span class="inline-block px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full mb-2">Penting</span>
-                        <h4 class="font-semibold">Persyaratan Unggah Dokumen</h4>
-                        <p class="text-neutral-600 text-sm mt-1">Mulai September 2026, setiap pengajuan surat wajib melampirkan scan/foto KTP dan KK untuk verifikasi.</p>
-                        <p class="text-xs text-neutral-500 mt-2"><i class="fa fa-calendar mr-1"></i> 01 September 2026</p>
-                    </div>
+                <h2 class="text-xl font-bold mb-5">Pengumuman</h2>
+                <div class="border border-neutral-200 rounded-lg p-4">
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">Penting</span>
+                    <p class="mt-2 font-semibold">✅ PDF + Tanda Tangan Elektronik Aktif!</p>
+                    <p class="text-sm text-neutral-600 mt-1">Surat yang disetujui otomatis menjadi PDF lengkap dengan Tanda Tangan Elektronik RT/RW.</p>
                 </div>
             </div>
         </section>
 
-        <!-- ============= HALAMAN VERIFIKASI PENGURUS RT/RW ============= -->
+        <!-- VERIFIKASI & BUAT PDF (Pengurus) -->
         <section id="page-verifikasi" class="page-content hidden">
             <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-soft p-4 md:p-6">
-                <h2 class="text-xl font-bold mb-2 text-center">📋 Daftar Surat Menunggu Verifikasi</h2>
-                <p class="text-neutral-600 text-center mb-5 text-sm">Halaman Khusus Pengurus RT/RW — Verifikasi & Tanda Tangan Surat</p>
+                <h2 class="text-xl font-bold mb-2 text-center">📋 Verifikasi & Buat PDF</h2>
+                <p class="text-center text-sm text-neutral-600 mb-5">Halaman Pengurus → Verifikasi → Tanda Tangan → Unduh PDF</p>
                 <div id="daftarSurat" class="space-y-3">
                     <div class="text-center text-neutral-500 py-8">
                         <i class="fa fa-inbox text-4xl mb-3 text-neutral-300"></i>
                         <p>Belum ada surat yang masuk</p>
-                        <p class="text-sm mt-1">Surat yang diajukan warga akan muncul di sini untuk diverifikasi</p>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- AREA PDF (Tersembunyi) -->
+        <div id="areaPdf" class="hidden">
+            <div class="pdf-surat p-6 max-w-2xl mx-auto bg-white">
+                <div class="kop">
+                    <h2>SURAT KETERANGAN / PENGANTAR</h2>
+                    <p id="pdfAlamatWilayah">Provinsi — Kab — Kec — Kelurahan — RT/RW</p>
+                </div>
+                <div class="no-surat">
+                    <p><strong>No. Surat:</strong> <span id="pdfNoSurat"></span></p>
+                    <p><strong>Tanggal:</strong> <span id="pdfTanggal"></span></p>
+                </div>
+                <div class="isi">
+                    <p>Yang bertanda tangan di bawah ini Pengurus RT/RW menerangkan bahwa:</p>
+                    <table><tr><td>Nama</td><td>: <span id="pdfNama"></span></td></tr><tr><td>NIK</td><td>: <span id="pdfNIK"></span></td></tr><tr><td>TTL</td><td>: <span id="pdfTTL"></span></td></tr><tr><td>Jenis Kelamin</td><td>: <span id="pdfJK"></span></td></tr><tr><td>Agama</td><td>: <span id="pdfAgama"></span></td></tr><tr><td>Alamat</td><td>: <span id="pdfAlamat"></span></td></tr><tr><td>Keperluan</td><td>: <span id="pdfKeperluan"></span></td></tr></table>
+                    <p class="mt-4">Berdasarkan data, yang bersangkutan adalah warga kami dan data benar. Surat dibuat untuk keperluan tersebut.</p>
+                </div>
+                <div class="ttd">
+                    <div class="ttd-box"><p>Pengurus RT</p><div class="ttd-img"><svg width="140" height="60"><path d="M10,45 Q30,10 50,35 T90,20 T130,40" stroke="#000" stroke-width="2.5" fill="none"/><text x="20" y="55" font-size="9">Tanda Tangan Elektronik</text></svg></div><p class="font-semibold" id="pdfNamaRT">Pengurus RT01</p></div>
+                    <div class="ttd-box"><p>Pengurus RW</p><div class="ttd-img"><svg width="140" height="60"><path d="M10,40 Q40,5 70,30 T130,15" stroke="#000" stroke-width="2.5" fill="none"/><text x="20" y="55" font-size="9">Tanda Tangan Elektronik</text></svg></div><p class="font-semibold" id="pdfNamaRW">Pengurus RW01</p></div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-neutral-200 py-4 mt-6">
         <div class="container mx-auto px-3 text-center">
-            <p class="text-neutral-600 text-sm">© 2026 SILAT SURAT — Sistem Layanan Surat Terpadu</p>
-            <p class="text-xs text-neutral-500 mt-1">Provinsi → Kabupaten/Kota → Kecamatan → Kelurahan/Desa → RW → RT | Alamat Lengkap | PDF + TTE</p>
+            <p class="text-neutral-600 text-sm">© 2026 SiLAWA — Sistem Informasi Layanan Warga</p>
         </div>
     </footer>
 
-    <script>
-        // ==================================================
-        // DATA WILAYAH LENGKAP SELURUH INDONESIA
-        // ==================================================
-        const dataWilayah = {
-            "Lampung": {
-                "Bandar Lampung": {
-                    "Teluk Betung Selatan": ["Gedong Meneng", "Kuripan", "Panjang"],
-                    "Teluk Betung Utara": ["Kedamaian", "Tanjung Karang"],
-                    "Kedamaian": ["Kelurahan Kedamaian"]
-                },
-                "Lampung Selatan": {
-                    "Kalianda": ["Kelurahan Kalianda", "Desa Way Urang"],
-                    "Natar": ["Kelurahan Natar", "Desa Negarasaka"]
-                }
-            },
-            "Sumatera Selatan": {
-                "Palembang": {
-                    "Ilir Timur": ["Kelurahan 1-20 Ilir"],
-                    "Sukarami": ["Kelurahan Sukarami"]
-                }
-            },
-            "DKI Jakarta": {
-                "Kepulauan Seribu": { "Kepulauan Seribu Utara": ["Pulau Panggang"] },
-                "Jakarta Selatan": { "Tebet": ["Tebet Timur", "Tebet Barat"] },
-                "Jakarta Timur": { "Matraman": ["Pisangan Baru"] },
-                "Jakarta Pusat": { "Gambir": ["Kebon Kelapa"] },
-                "Jakarta Barat": { "Grogol Petamburan": ["Tomang"] },
-                "Jakarta Utara": { "Pademangan": ["Pademangan Barat"] }
-            },
-            "Jawa Barat": {
-                "Bandung": {
-                    "Cihampelas": ["Cihampelas"],
-                    "Cicendo": ["Husein Sastranegara"]
-                },
-                "Bogor": {
-                    "Bogor Tengah": ["Pabaton", "Cibogor"]
-                },
-                "Bekasi": {
-                    "Bekasi Timur": ["Margahayu"]
-                }
-            },
-            "Jawa Tengah": {
-                "Semarang": {
-                    "Semarang Tengah": ["Pandansari"],
-                    "Candisari": ["Candi"]
-                }
-            },
-            "DI Yogyakarta": {
-                "Kota Yogyakarta": {
-                    "Danurejan": ["Bausasran"],
-                    "Gondokusuman": ["Klitren"]
-                }
-            },
-            "Jawa Timur": {
-                "Surabaya": {
-                    "Gubeng": ["Airlangga"],
-                    "Sukolilo": ["Menur"]
-                }
-            },
-            "Banten": {
-                "Serang": {
-                    "Serang": ["Cipare"]
-                },
-                "Tangerang": {
-                    "Tangerang": ["Cikokol"]
-                }
-            }
-        };
-
-        // Data RT/RW per Kelurahan
-        const dataRtRw = {
-            "Gedong Meneng": { "RW001": ["RT001","RT002","RT003"], "RW002": ["RT001","RT002"] },
-            "Kuripan": { "RW001": ["RT001","RT002"], "RW002": ["RT001"] },
-            "Panjang": { "RW001": ["RT001","RT002","RT003"], "RW002": ["RT001","RT002"] },
-            "Kedamaian": { "RW001": ["RT001","RT002"], "RW002": ["RT001","RT002","RT003"] },
-            "Tanjung Karang": { "RW001": ["RT001","RT002"], "RW002": ["RT001","RT002"] },
-            "Kelurahan Kalianda": { "RW001": ["RT001","RT002"] },
-            "Kelurahan Natar": { "RW001": ["RT001","RT002","RT003"] },
-            "Pabaton": { "RW001": ["RT001","RT002"] },
-            "Cibogor": { "RW001": ["RT001"] },
-            "Tebet Timur": { "RW001": ["RT001","RT002","RT003"] },
-            "Tebet Barat": { "RW001": ["RT001","RT002"] },
-            "Cihampelas": { "RW001": ["RT001","RT002"] },
-            "Bausasran": { "RW001": ["RT001","RT002"] },
-            "Klitren": { "RW001": ["RT001"] },
-            "Airlangga": { "RW001": ["RT001","RT002"] },
-            "Cipare": { "RW001": ["RT001"] },
-            "Cikokol": { "RW001": ["RT001","RT002"] }
-        };
-
-        // ==================================================
-        // NAVIGASI HALAMAN
-        // ==================================================
-        const navLinks = document.querySelectorAll('[data-page]');
-        const gotoLinks = document.querySelectorAll('[data-goto]');
-        const pages = document.querySelectorAll('.page-content');
-        let peranAktif = null;
-
-        function tampilkanHalaman(nama) {
-            pages.forEach(p => p.classList.add('hidden'));
-            document.getElementById(`page-${nama}`).classList.remove('hidden');
-            navLinks.forEach(l => l.classList.toggle('active', l.dataset.page === nama));
-            window.scrollTo({top:0, behavior:'smooth'});
-        }
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                tampilkanHalaman(link.dataset.page);
-                document.getElementById('mobileMenu').classList.add('hidden');
-            });
-        });
-
-        gotoLinks.forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                tampilkanHalaman(link.dataset.goto);
-            });
-        });
-
-        document.getElementById('menuToggle').addEventListener('click', () => {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
-        });
-
-        // ==================================================
-        // PILIH PERAN: WARGA / PENGURUS
-        // ==================================================
-        function masukSebagai(peran) {
-            peranAktif = peran;
-            document.getElementById('btnMasukWarga').classList.add('hidden');
-            document.getElementById('btnMasukPengurus').classList.add('hidden');
-            document.getElementById('btnKeluar').classList.remove('hidden');
-            document.getElementById('btnMasukWargaMobile').classList.add('hidden');
-            document.getElementById('btnMasukPengurusMobile').classList.add('hidden');
-            document.getElementById('btnKeluarMobile').classList.remove('hidden');
-
-            if (peran === 'pengurus') {
-                document.getElementById('menuVerifikasi').style.display = 'block';
-                document.getElementById('menuVerifikasiMobile').style.display = 'block';
-                alert('✅ Masuk sebagai Pengurus RT/RW berhasil!\n\nHalaman Verifikasi Surat sekarang terbuka.');
-            } else {
-                document.getElementById('menuVerifikasi').style.display = 'none';
-                document.getElementById('menuVerifikasiMobile').style.display = 'none';
-                alert('✅ Masuk sebagai Warga berhasil!\n\nSilakan ajukan surat.');
-            }
-        }
-
-        function keluar() {
-            peranAktif = null;
-            document.getElementById('btnMasukWarga').classList.remove('hidden');
-            document.getElementById('btnMasukPengurus').classList.remove('hidden');
-            document.getElementById('btnKeluar').classList.add('hidden');
-            document.getElementById('btnMasukWargaMobile').classList.remove('hidden');
-            document.getElementById('btnMasukPengurusMobile').classList.remove('hidden');
-            document.getElementById('btnKeluarMobile').classList.add('hidden');
-            document.getElementById('menuVerifikasi').style.display = 'none';
-            document.getElementById('menuVerifikasiMobile').style.display = 'none';
-            tampilkanHalaman('beranda');
-            alert('✅ Berhasil keluar dari sistem.');
-        }
-
-        document.getElementById('btnMasukWarga').onclick = () => masukSebagai('warga');
-        document.getElementById('btnMasukPengurus').onclick = () => masukSebagai('pengurus');
-        document.getElementById('btnKeluar').onclick = keluar;
-        document.getElementById('btnMasukWargaMobile').onclick = () => { masukSebagai('warga'); document.getElementById('mobileMenu').classList.add('hidden'); };
-        document.getElementById('btnMasukPengurusMobile').onclick = () => { masukSebagai('pengurus'); document.getElementById('mobileMenu').classList.add('hidden'); };
-        document.getElementById('btnKeluarMobile').onclick = () => { keluar(); document.getElementById('mobileMenu').classList.add('hidden'); };
-
-        // ==================================================
-        // PILIHAN WILAYAH BERTAHAP
-        // ==================================================
-        const selProvinsi = document.getElementById('provinsi');
-        const selKabupaten = document.getElementById('kabupaten');
-        const selKecamatan = document.getElementById('kecamatan');
-        const selKelurahan = document.getElementById('kelurahan');
-        const selRW = document.getElementById('rw');
-        const selRT = document.getElementById('rt');
-
-        function resetSelect(...els) {
-            els.forEach(e => { e.innerHTML='<option value="">-- Pilih --</option>'; e.disabled=true; });
-        }
-
-        selProvinsi.addEventListener('change', () => {
-            const prov = selProvinsi.value;
-            resetSelect(selKabupaten, selKecamatan, selKelurahan, selRW, selRT);
-            if (dataWilayah[prov]) {
-                Object.keys(dataWilayah[prov]).forEach(k => selKabupaten.innerHTML += `<option value="${k}">${k}</option>`);
-                selKabupaten.disabled = false;
-            }
-        });
-
-        selKabupaten.addEventListener('change', () => {
-            const prov = selProvinsi.value, kab = selKabupaten.value;
-            resetSelect(selKecamatan, selKelurahan, selRW, selRT);
-            if (dataWilayah[prov]?.[kab]) {
-                Object.keys(dataWilayah[prov][kab]).forEach(k => selKecamatan.innerHTML += `<option value="${k}">${k}</option>`);
-                selKecamatan.disabled = false;
-            }
-        });
-
-        selKecamatan.addEventListener('change', () => {
-            const prov = selProvinsi.value, kab = selKabupaten.value, kec = selKecamatan.value;
-            resetSelect(selKelurahan, selRW, selRT);
-            if (dataWilayah[prov]?.[kab]?.[kec]) {
-                dataWilayah[prov][kab][kec].forEach(k => selKelurahan.innerHTML += `<option value="${k}">${k}</option>`);
-                selKelurahan.disabled = false;
-            }
-        });
-
-        selKelurahan.addEventListener('change', () => {
-            const kel = selKelurahan.value;
-            resetSelect(selRW, selRT);
-            if (dataRtRw[kel]) {
-                Object.keys(dataRtRw[kel]).forEach(rw => selRW.innerHTML += `<option value="${rw}">${rw}</option>`);
-                selRW.disabled = false;
-            }
-        });
-
-        selRW.addEventListener('change', () => {
-            const kel = selKelurahan.value, rw = selRW.value;
-            resetSelect(selRT);
-            if (dataRtRw[kel]?.[rw]) {
-                dataRtRw[kel][rw].forEach(rt => selRT.innerHTML += `<option value="${rt}">${rt}</option>`);
-                selRT.disabled = false;
-            }
-        });
-
-        // ==================================================
-        // PREVIEW NAMA FILE UPLOAD
-        // ==================================================
-        function setupFilePreview(fileId, previewId) {
-            const file = document.getElementById(fileId);
-            const prev = document.getElementById(previewId);
-            file.addEventListener('change', () => {
-                if (file.files[0]) {
-                    prev.innerHTML = `<i class="fa fa-check-circle text-secondary text-xl mb-1"></i><p class="text-secondary font-medium text-sm">${file.files[0].name}</p><p class="text-xs text-neutral-500">${(file.files[0].size/1024/1024).toFixed(2)} MB</p>`;
-                } else {
-                    prev.innerHTML = `<i class="fa fa-cloud-upload text-2xl mb-2"></i><p>Klik untuk memilih file</p>`;
-                }
-            });
-        }
-        setupFilePreview('fileKtp','previewKtp');
-        setupFilePreview('fileKK','previewKK');
-
-        document.getElementById('fileLain').addEventListener('change', e => {
-            const files = e.target.files;
-            const prev = document.getElementById('previewLain');
-            if (files.length > 0) {
-                let html = `<i class="fa fa-check-circle text-secondary text-xl mb-1"></i><p class="text-secondary font-medium text-sm">${files.length} berkas terpilih</p>`;
-                prev.innerHTML = html;
-            } else {
-                prev.innerHTML = `<i class="fa fa-paperclip text-2xl mb-2
+    <script src="./script.js"></script>
+</body>
+</html>
