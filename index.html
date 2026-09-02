@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILAWA — Sistem Informasi Layanan Surat Warga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#00B42A',
+                        accent: '#FF7D00',
+                        neutral: {
+                            50: '#F7F8FA', 100: '#F2F3F5', 200: '#E5E6EB', 300: '#C9CDD4',
+                            400: '#86909C', 500: '#4E5969', 600: '#272E3B', 700: '#1D2129',
+                        }
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px rgba(22, 93, 255, 0.08)',
+                        hover: '0 8px 30px rgba(22, 93, 255, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto { content-visibility: auto; }
+            .card-hover { @apply transition-all duration-300 hover:shadow-hover hover:-translate-y-1; }
+            .nav-link { @apply px-3 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary text-sm md:text-base; }
+            .nav-link.active { @apply bg-primary/10 text-primary font-semibold; }
+            .form-input { @apply w-full px-3 py-2.5 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base; }
+            .form-label { @apply block text-sm font-medium text-neutral-700 mb-1; }
+            .btn { @apply px-4 py-2.5 rounded-lg font-medium transition-all duration-200 text-base; }
+            .btn-primary { @apply bg-primary text-white hover:bg-primary/90; }
+            .btn-secondary { @apply bg-white border border-primary text-primary hover:bg-primary/5; }
+            .btn-success { @apply bg-secondary text-white hover:bg-secondary/90; }
+            .step-circle { @apply w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0; }
+            .step-line { @apply flex-1 h-0.5 mt-5 hidden sm:block; }
+            .file-zone { @apply border-2 border-dashed border-neutral-200 rounded-lg p-4 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all; }
+        }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .langkah { display: none; }
+        .langkah.tampil { display: block; }
+    </style>
+</head>
+<body class="font-sans bg-neutral-50 text-neutral-700 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="bg-white shadow-soft sticky top-0 z-50">
+        <div class="container mx-auto px-3 md:px-6">
+            <div class="flex items-center justify-between py-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-lg">S</div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold text-primary leading-tight">SILAWA</h1>
+                        <p class="text-xs text-neutral-400 hidden sm:block">Sistem Informasi Layanan Surat Warga</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center gap-1">
+                    <a href="#" class="nav-link active" data-page="beranda"><i class="fa fa-home mr-1"></i> Beranda</a>
+                    <a href="#" class="nav-link" data-page="pengajuan"><i class="fa fa-file-text-o mr-1"></i> Ajukan Surat</a>
+                    <a href="#" class="nav-link" data-page="status"><i class="fa fa-search mr-1"></i> Cek Status</a>
+                </nav>
+                <button id="menuToggle" class="md:hidden text-2xl text-neutral-700">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+            <!-- Menu Mobile -->
+            <div id="mobileMenu" class="md:hidden hidden pb-3 border-t border-neutral-100 mt-2 pt-3">
+                <nav class="flex flex-col gap-2">
+                    <a href="#" class="nav-link active" data-page="beranda">Beranda</a>
+                    <a href="#" class="nav-link" data-page="pengajuan">Ajukan Surat</a>
+                    <a href="#" class="nav-link" data-page="status">Cek Status</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-3 md:px-6 py-5 md:py-8">
+
+        <!-- Halaman BERANDA -->
+        <section id="page-beranda" class="page-content active">
+            <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-5 md:p-8 mb-8">
+                <div class="grid md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <h2 class="text-xl md:text-3xl font-bold leading-tight mb-3">
+                            Selamat Datang di<br>
+                            <span class="text-primary">SILAWA</span>
+                        </h2>
+                        <p class="text-neutral-600 text-base mb-5">
+                            Ajukan surat pengantar secara online dari mana saja. Isi formulir, unggah berkas, dan dapatkan surat dengan tanda tangan elektronik.
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="#" data-goto="pengajuan" class="btn btn-primary goto-page">
+                                <i class="fa fa-file-text-o mr-2"></i> Ajukan Surat Sekarang
+                            </a>
+                            <a href="#" data-goto="status" class="btn btn-secondary goto-page">
+                                <i class="fa fa-search mr-2"></i> Cek Status
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex justify-center">
+                        <img src="https://picsum.photos/id/42/600/400" alt="Layanan Surat Warga" class="rounded-xl shadow-soft w-full max-w-md object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-white rounded-xl p-5 shadow-soft card-hover">
+                    <i class="fa fa-file-text-o text-primary text-3xl mb-3"></i>
+                    <h3 class="text-lg font-semibold mb-2">Ajukan Online</h3>
+                    <p class="text-neutral-500 text-sm">Isi formulir sesuai kebutuhan dari rumah, tanpa antre.</p>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-soft card-hover">
+                    <i class="fa fa-cloud-upload text-primary text-3xl mb-3"></i>
+                    <h3 class="text-lg font-semibold mb-2">Unggah Dokumen</h3>
+                    <p class="text-neutral-500 text-sm">Lampirkan persyaratan dalam format JPG, PNG, atau PDF.</p>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-soft card-hover">
+                    <i class="fa fa-check-circle text-secondary text-3xl mb-3"></i>
+                    <h3 class="text-lg font-semibold mb-2">Tanda Tangan Elektronik</h3>
+                    <p class="text-neutral-500 text-sm">Surat keluar otomatis dengan tanda tangan sah.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Halaman PENGAJUAN SURAT -->
+        <section id="page-pengajuan" class="page-content">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-white rounded-xl shadow-soft p-5 md:p-7">
+                    <h2 class="text-xl font-bold text-center mb-6">Ajukan Surat Pengantar Baru</h2>
+
+                    <!-- Indikator Langkah -->
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center w-full">
+                            <div class="text-center">
+                                <div id="lingkar1" class="step-circle bg-primary text-white">1</div>
+                                <span class="text-xs mt-1 block">Wilayah</span>
+                            </div>
+                            <div id="garis1" class="step-line bg-neutral-200"></div>
+                            <div class="text-center">
+                                <div id="lingkar2" class="step-circle bg-neutral-200 text-neutral-500">2</div>
+                                <span class="text-xs mt-1 block">Jenis Surat</span>
+                            </div>
+                            <div id="garis2" class="step-line bg-neutral-200"></div>
+                            <div class="text-center">
+                                <div id="lingkar3" class="step-circle bg-neutral-200 text-neutral-500">3</div>
+                                <span class="text-xs mt-1 block">Data Diri</span>
+                            </div>
+                            <div id="garis3" class="step-line bg-neutral-200"></div>
+                            <div class="text-center">
+                                <div id="lingkar4" class="step-circle bg-neutral-200 text-neutral-500">4</div>
+                                <span class="text-xs mt-1 block">Dokumen</span>
+                            </div>
+                            <div id="garis4" class="step-line bg-neutral-200"></div>
+                            <div class="text-center">
+                                <div id="lingkar5" class="step-circle bg-neutral-200 text-neutral-500">5</div>
+                                <span class="text-xs mt-1 block">Konfirmasi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="formPengajuan" class="space-y-4">
+
+                        <!-- Langkah 1: Data Wilayah -->
+                        <div id="langkah1" class="langkah tampil">
+                            <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2 mb-4">📍 Langkah 1: Data Wilayah Pemohon</h3>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="form-label">Provinsi <span class="text-red-500">*</span></label>
+                                    <select id="provinsi" class="form-input" required>
+                                        <option value="">-- Pilih Provinsi --</option>
+                                        <option value="Lampung" selected>Lampung</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Kota / Kabupaten <span class="text-red-500">*</span></label>
+                                    <select id="kota" class="form-input" required>
+                                        <option value="">-- Pilih Kota/Kabupaten --</option>
+                                        <option value="Bandar Lampung" selected>Bandar Lampung</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Kecamatan <span class="text-red-500">*</span></label>
+                                    <select id="kecamatan" class="form-input" required>
+                                        <option value="">-- Pilih Kecamatan --</option>
+                                        <option value="Teluk Betung Selatan" selected>Teluk Betung Selatan</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Kelurahan <span class="text-red-500">*</span></label>
+                                    <select id="kelurahan" class="form-input" required>
+                                        <option value="">-- Pilih Kelurahan --</option>
+                                        <option value="Gedong Meneng" selected>Gedong Meneng</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">RW <span class="text-red-500">*</span></label>
+                                    <select id="rw" class="form-input" required>
+                                        <option value="">-- Pilih RW --</option>
+                                        <option value="001" selected>001</option>
+                                        <option value="002">002</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">RT <span class="text-red-500">*</span></label>
+                                    <select id="rt" class="form-input" required>
+                                        <option value="">-- Pilih RT --</option>
+                                        <option value="001" selected>001</option>
+                                        <option value="002">002</option>
+                                        <option value="003">003</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex justify-end mt-5">
+                                <button type="button" id="btnLanjut1" class="btn btn-primary">Lanjut <i class="fa fa-arrow-right ml-1"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Langkah 2: Jenis Surat -->
+                        <div id="langkah2" class="langkah">
+                            <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2 mb-4">📄 Langkah 2: Pilih Jenis Surat</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="form-label">Jenis Surat yang Diajukan <span class="text-red-500">*</span></label>
+                                    <select id="jenisSurat" class="form-input" required>
+                                        <option value="">-- Pilih Jenis Surat --</option>
+                                        <option value="domisili">Surat Keterangan Domisili</option>
+                                        <option value="ktp">Surat Pengantar Pembuatan KTP</option>
+                                        <option value="kk">Surat Pengantar Kartu Keluarga</option>
+                                        <option value="usaha">Surat Keterangan Usaha</option>
+                                        <option value="nikah">Surat Pengantar Nikah</option>
+                                        <option value="belum_menikah">Surat Keterangan Belum Menikah</option>
+                                        <option value="sktm">Surat Keterangan Tidak Mampu (SKTM)</option>
+                                        <option value="pindah">Surat Keterangan Pindah</option>
+                                        <option value="lainnya">Surat Keterangan Lainnya</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Keperluan Surat <span class="text-red-500">*</span></label>
+                                    <textarea id="keperluan" rows="3" class="form-input" placeholder="Jelaskan untuk keperluan apa surat ini dibuat..." required></textarea>
+                                </div>
+                            </div>
+                            <div class="flex justify-between mt-5">
+                                <button type="button" id="btnKembali2" class="btn btn-secondary"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
+                                <button type="button" id="btnLanjut2" class="btn btn-primary">Lanjut <i class="fa fa-arrow-right ml-1"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Langkah 3: Data Diri -->
+                        <div id="langkah3" class="langkah">
+                            <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2 mb-4">👤 Langkah 3: Data Diri Pemohon</h3>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="form-label">NIK (16 Digit) <span class="text-red-500">*</span></label>
+                                    <input type="text" id="nik" class="form-input" maxlength="16" minlength="16" placeholder="Masukkan 16 digit NIK" required>
+                                </div>
+                                <div>
+                                    <label class="form-label">Nama Lengkap <span class="text-red-500">*</span></label>
+                                    <input type="text" id="nama" class="form-input" placeholder="Sesuai KTP" required>
+                                </div>
+                                <div>
+                                    <label class="form-label">Tempat Lahir <span class="text-red-500">*</span></label>
+                                    <input type="text" id="tempatLahir" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label class="form-label">Tanggal Lahir <span class="text-red-500">*</span></label>
+                                    <input type="date" id="tglLahir" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label class="form-label">Jenis Kelamin <span class="text-red-500">*</span></label>
+                                    <select id="jk" class="form-input" required>
+                                        <option value="">-- Pilih --</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Agama <span class="text-red-500">*</span></label>
+                                    <select id="agama" class="form-input" required>
+                                        <option value="">-- Pilih --</option>
+                                        <option value="Islam">Islam</option>
+                                        <option value="Kristen">Kristen</option>
+                                        <option value="Katolik">Katolik</option>
+                                        <option value="Hindu">Hindu</option>
+                                        <option value="Budha">Budha</option>
+                                        <option value="Khonghucu">Khonghucu</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="form-label">Alamat Lengkap <span class="text-red-500">*</span></label>
+                                    <textarea id="alamatLengkap" rows="2" class="form-input" placeholder="Jalan, Nomor, RT/RW, Kelurahan..." required></textarea>
+                                </div>
+                                <div>
+                                    <label class="form-label">Pekerjaan</label>
+                                    <input type="text" id="pekerjaan" class="form-input">
+                                </div>
+                                <div>
+                                    <label class="form-label">No. WhatsApp / HP <span class="text-red-500">*</span></label>
+                                    <input type="tel" id="hp" class="form-input" placeholder="Contoh: 081234567890" required>
+                                </div>
+                            </div>
+                            <div class="flex justify-between mt-5">
+                                <button type="button" id="btnKembali3" class="btn btn-secondary"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
+                                <button type="button" id="btnLanjut3" class="btn btn-primary">Lanjut <i class="fa fa-arrow-right ml-1"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Langkah 4: Unggah Dokumen -->
+                        <div id="langkah4" class="langkah">
+                            <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2 mb-4">📎 Langkah 4: Unggah Dokumen Persyaratan</h3>
+                            <p class="text-sm text-neutral-500 mb-4">Format yang diizinkan: <strong>JPG, PNG, PDF</strong>. Maksimal ukuran per file: <strong>5 MB</strong>.</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="form-label">Foto KTP Pemohon <span class="text-red-500">* Wajib</span></label>
+                                    <label class="file-zone block">
+                                        <input type="file" id="fileKTP" accept=".jpg,.jpeg,.png,.pdf" class="hidden" required>
+                                        <div id="lblKTP"><i class="fa fa-cloud-upload text-2xl mb-2"></i><p>Klik atau tarik file ke sini</p></div>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="form-label">Foto Kartu Keluarga <span class="text-red-500">* Wajib</span></label>
+                                    <label class="file-zone block">
+                                        <input type="file" id="fileKK" accept=".jpg,.jpeg,.png,.pdf" class="hidden" required>
+                                        <div id="lblKK"><i class="fa fa-cloud-upload text-2xl mb-2"></i><p>Klik atau tarik file ke sini</p></div>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="form-label">Dokumen Pendukung Lainnya (Opsional)</label>
+                                    <label class="file-zone block">
+                                        <input type="file" id="fileLainnya" accept=".jpg,.jpeg,.png,.pdf" multiple class="hidden">
+                                        <div id="lblLainnya"><i class="fa fa-paperclip text-2xl mb-2"></i><p>Klik untuk memilih berkas tambahan</p><p class="text-xs text-neutral-400 mt-1">Bisa pilih lebih dari satu file</p></div>
+                                    </label>
+                                    <div id="daftarFileLainnya" class="mt-2 text-sm text-neutral-600"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between mt-5">
+                                <button type="button" id="btnKembali4" class="btn btn-secondary"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
+                                <button type="button" id="btnLanjut4" class="btn btn-primary">Lihat Ringkasan <i class="fa fa-check ml-1"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Langkah 5: Ringkasan & Kirim -->
+                        <div id="langkah5" class="langkah">
+                            <h3 class="text-base font-semibold text-primary border-b border-primary/20 pb-2 mb-4">✅ Langkah 5: Konfirmasi Pengajuan</h3>
+                            <div id="ringkasan" class="bg-neutral-50 p-4 rounded-lg text-sm space-y-2">
+                                <!-- Isi otomatis oleh JavaScript -->
+                            </div>
+                            <label class="flex items-start gap-2 mt-4 cursor-pointer">
+                                <input type="checkbox" id="setuju" class="mt-1" required>
+                                <span class="text-sm text-neutral-600">Saya menyatakan data dan dokumen di atas benar dan sah. Saya bersedia bertanggung jawab sesuai hukum yang berlaku.</span>
+                            </label>
+                            <div class="flex justify-between mt-5">
+                                <button type="button" id="btnKembali5" class="btn btn-secondary"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
+                                <button type="submit" id="btnKirim" class="btn btn-success"><i class="fa fa-paper-plane mr-1"></i> Kirim Pengajuan</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Halaman CEK STATUS -->
+        <section id="page-status" class="page-content">
+            <div class="max-w-md mx-auto">
+                <div class="bg-white rounded-xl shadow-soft p-5 md:p-7">
+                    <h2 class="text-xl font-bold text-center mb-6">Cek Status Pengajuan</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="form-label">Masukkan Nomor Pengajuan</label>
+                            <input type="text" id="noPengajuan" class="form-input" placeholder="Contoh: SILAWA-20260901-XXXX">
+                        </div>
+                        <button id="btnCek" class="btn btn-primary w-full"><i class="fa fa-search mr-2"></i> Cek Status</button>
+                        <div id="hasilStatus" class="mt-4 text-center text-neutral-500 text-sm">
+                            Masukkan nomor pengajuan untuk melihat status
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t mt-8 py-4 text-center text-sm text-neutral-400">
+        <p>© 2026 SILAWA — Sistem Informasi Layanan Surat Warga</p>
+        <p class="text-xs mt-1">Versi Uji Coba Offline • Siap disambungkan ke Supabase</p>
+    </footer>
+
+    <script>
+        // =========================================================
+        // NAVIGASI HALAMAN
+        // =========================================================
+        const halaman = {
+            beranda: document.getElementById('page-beranda'),
+            pengajuan: document.getElementById('page-pengajuan'),
+            status: document.getElementById('page-status')
+        };
+
+        document.querySelectorAll('[data-page]').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                const tuju = btn.dataset.page;
+                document.querySelectorAll('[data-page]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                Object.keys(halaman).forEach(h => halaman[h].classList.remove('active'));
+                halaman[tuju].classList.add('active');
+                document.getElementById('mobileMenu').classList.add('hidden');
+            });
+        });
+
+        document.querySelectorAll('.goto-page').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                const tuju = btn.dataset.goto;
+                document.querySelectorAll('[data-page]').forEach(b => b.classList.remove('active'));
+                document.querySelector(`[data-page="${tuju}"]`).classList.add('active');
+                Object.keys(halaman).forEach(h => halaman[h].classList.remove('active'));
+                halaman[tuju].classList.add('active');
+                window.scrollTo(0,0);
+            });
+        });
+
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+
+        // =========================================================
+        // PENGELOLAAN LANGKAH FORMULIR
+        // =========================================================
+        const L = [
+            document.getElementById('langkah1'),
+            document.getElementById('langkah2'),
+            document.getElementById('langkah3'),
+            document.getElementById('langkah4'),
+            document.getElementById('langkah5')
+        ];
+        const lingkar = [
+            document.getElementById('lingkar1'),
+            document.getElementById('lingkar2'),
+            document.getElementById('lingkar3'),
+            document.getElementById('lingkar4'),
+            document.getElementById('lingkar5')
+        ];
+        const garis = [
+            document.getElementById('garis1'),
+            document.getElementById('garis2'),
+            document.getElementById('garis3'),
+            document.getElementById('garis4')
+        ];
+
+        function tampilLangkah(nomor) {
+            L.forEach((b, i) => b.classList.toggle('tampil', i === nomor - 1));
+            lingkar.forEach((b, i) => {
+                if (i + 1 < nomor) {
+                    b.className = 'step-circle bg-secondary text-white';
+                } else if (i + 1 === nomor) {
+                    b.className = 'step-circle bg-primary text-white';
+                } else {
+                    b.className = 'step-circle bg-neutral-200 text-neutral-500';
+                }
+            });
+            garis.forEach((b, i) => {
+                b.className = i + 1 < nomor ? 'step-line bg-secondary' : 'step-line bg-neutral-200';
+            });
+            window.scrollTo(0,0);
+        }
+
+        // Data formulir
+        const formData = {};
+
+        // Validasi per langkah
+        function validLangkah1() {
+            return document.getElementById('provinsi').value &&
+                   document.getElementById('kota').value &&
+                   document.getElementById('kecamatan').value &&
+                   document.getElementById('kelurahan').value &&
+                   document.getElementById('rw').value &&
+                   document.getElementById('rt').value;
+        }
+        function validLangkah2() {
+            return document.getElementById('jenisSurat').value &&
+                   document.getElementById('keperluan').value.trim().length >= 10;
+        }
+        function validLangkah3() {
+            const nik = document.getElementById('nik').value;
+            return nik.length === 16 &&
+                   document.getElementById('nama').value.trim() &&
+                   document.getElementById('tempatLahir').value.trim() &&
+                   document.getElementById('tglLahir').value &&
+                   document.getElementById('jk').value &&
+                   document.getElementById('agama').value &&
+                   document.getElementById('alamatLengkap').value.trim() &&
+                   document.getElementById('hp').value.trim().length >= 10;
+        }
+        function validLangkah4() {
+            return document.getElementById('fileKTP').files[0] &&
+                   document.getElementById('fileKK').files[0];
+        }
+
+        // Simpan data langkah
+        function simpanDataLangkah(ke) {
+            if (ke >= 1) {
+                formData.provinsi = document.getElementById('provinsi').value;
+                formData.kota = document.getElementById('kota').value;
+                formData.kecamatan = document.getElementById('kecamatan').value;
+                formData.kelurahan = document.getElementById('kelurahan').value;
+                formData.rw = document.getElementById('rw').value;
+                formData.rt = document.getElementById('rt').value;
+            }
+            if (ke >= 2) {
+                formData.jenisSurat = document.getElementById('jenisSurat').selectedOptions[0].text;
+                formData.keperluan = document.getElementById('keperluan').value;
+            }
+            if (ke >= 3) {
+                formData.nik = document.getElementById('nik').value;
+                formData.nama = document.getElementById('nama').value;
+                formData.tempatLahir = document.getElementById('tempatLahir').value;
+                formData.tglLahir = document.getElementById('tglLahir').value;
+                formData.jk = document.getElementById('jk').value;
+                formData.agama = document.getElementById('agama').value;
+                formData.alamatLengkap = document.getElementById('alamatLengkap').value;
+                formData.pekerjaan = document.getElementById('pekerjaan').value || '-';
+                formData.hp = document.getElementById('hp').value;
+            }
+            if (ke >= 4) {
+                formData.fileKTP = document.getElementById('fileKTP').files[0]?.name || '-';
+                formData.fileKK = document.getElementById('fileKK').files[0]?.name || '-';
+                const lain = document.getElementById('fileLainnya').files;
+                formData.fileLainnya = lain.length ? Array.from(lain).map(f => f.name).join(', ') : 'Tidak ada';
+            }
+        }
+
+        // Buat ringkasan
+        function buatRingkasan() {
+            simpanDataLangkah(5);
+            const jenisSurat = document.getElementById('jenisSurat').selectedOptions[0].text;
+            document.getElementById('ringkasan').innerHTML = `
+                <p><strong>Nomor Pengajuan:</strong> SILAWA-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${Math.floor(Math.random()*9000+1000)}</p>
+                <p><strong>Wilayah:</strong> ${formData.kelurahan}, Kec. ${formData.kecamatan}, ${formData.kota}</p>
+                <p><strong>Jenis Surat:</strong> ${jenisSurat}</p>
+                <p><strong>Nama Pemohon:</strong> ${formData.nama}</p>
+                <p><strong>NIK:</strong> ${formData.nik}</p>
+                <p><strong>TTL:</strong> ${formData.tempatLahir}, ${formData.tglLahir}</p>
+                <p><strong>Alamat:</strong> ${formData.alamatLengkap}</p>
+                <p><strong>Kontak:</strong> ${formData.hp}</p>
+                <p><strong>File KTP:</strong> ${formData.fileKTP}</p>
+                <p><strong>File KK:</strong> ${formData.fileKK}</p>
+                <p><strong>File Pendukung:</strong> ${formData.fileLainnya}</p>
+            `;
+        }
+
+        // Tombol Lanjut
+        document.getElementById('btnLanjut1').addEventListener('click', () => {
+            if (!validLangkah1()) return alert('Lengkapi semua data wilayah!');
+            tampilLangkah(2);
+        });
+        document.getElementById('btnLanjut2').addEventListener('click', () => {
+            if (!validLangkah2()) return alert('Pilih jenis surat dan isi keperluan!');
+            tampilLangkah(3);
+        });
+        document.getElementById('btnLanjut3').addEventListener('click', () => {
+            if (!validLangkah3()) return alert('Lengkapi semua data diri! NIK harus 16 digit.');
+            tampilLangkah(4);
+        });
+        document.getElementById('btnLanjut4').addEventListener('click', () => {
+            if (!validLangkah4()) return alert('Unggah foto KTP dan Kartu Keluarga!');
+            buatRingkasan();
+            tampilLangkah(5);
+        });
+
+        // Tombol Kembali
+        document.getElementById('btnKembali2').addEventListener('click', () => tampilLangkah(1));
+        document.getElementById('btnKembali3').addEventListener('click', () => tampilLangkah(2));
+        document.getElementById('btnKembali4').addEventListener('click', () => tampilLangkah(3));
+        document.getElementById('btnKembali5').addEventListener('click', () => tampilLangkah(4));
+
+        // Tampilan nama file yang dipilih
+        function tampilNamaFile(inputId, labelId) {
+            document.getElementById(inputId).addEventListener('change', e => {
+                const f = e.target.files[0];
+                if (f) {
+                    document.getElementById(labelId).innerHTML = `<i class="fa fa-check-circle text-secondary text-xl mb-1"></i><p class="text-secondary font-medium">${f.name}</p><p class="text-xs">${(f.size/1048576).toFixed(2)} MB</p>`;
+                }
+            });
+        }
+        tampilNamaFile('fileKTP', 'lblKTP');
+        tampilNamaFile('fileKK', 'lblKK');
+
+        // File pendukung banyak
+        document.getElementById('fileLainnya').addEventListener('change', e => {
+            const files = e.target.files;
+            const daftar = document.getElementById('daftarFileLainnya');
+            if (files.length > 0) {
+                let html = '<p class="font-medium mb-1">Berkas yang dipilih:</p><ul class="list-disc list-inside">';
+                for (let i=0; i<files.length; i++) {
+                    html += `<li>${files[i].name} (${(files[i].size/1048576).toFixed(2)} MB)</li>`;
+                }
+                html += '</ul>';
+                daftar.innerHTML = html;
+                document.getElementById('lblLainnya').innerHTML = `<i class="fa fa-check-circle text-secondary text-xl mb-1"></i><p class="text-secondary font-medium">${files.length} berkas terpilih</p>`;
+            } else {
+                daftar.innerHTML = '';
+                document.getElementById('lblLainnya').innerHTML = '<i class="fa fa-paperclip text-2xl mb-2"></i><p>Klik untuk memilih berkas tambahan</p><p class="text-xs text-neutral-400 mt-1">Bisa pilih lebih dari satu file</p>';
+            }
+        });
+
+        // Kirim Pengajuan
+        document.getElementById('formPengajuan').addEventListener('submit', e => {
+            e.preventDefault();
+            if (!document.getElementById('setuju').checked) return alert('Centang persetujuan terlebih dahulu!');
+            const noPengajuan = 'SILAWA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.floor(Math.random()*9000+1000);
+            alert(`✅ PENGAJUAN BERHASIL DIKIRIM!\n\nNomor Pengajuan: ${noPengajuan}\n\nSimpan nomor ini untuk mengecek status nanti.\n\n(Saat ini berjalan dalam mode uji coba lokal. Setelah Supabase siap, data akan tersimpan otomatis.)`);
+            // Reset formulir
+            setTimeout(() => {
+                document.getElementById('formPengajuan').reset();
+                document.getElementById('daftarFileLainnya').innerHTML = '';
+                document.getElementById('lblKTP').innerHTML = '<i class="fa fa-cloud-upload text-2xl mb-2"></i><p>Klik atau tarik file ke sini</p>';
+                document.getElementById('lblKK').innerHTML = '<i class="fa fa-cloud-upload text-2xl mb-2"></i><p>Klik atau tarik file ke sini</p>';
+                document.getElementById('lblLainnya').innerHTML = '<i class="fa fa-paperclip text-2xl mb-2"></i><p>Klik untuk memilih berkas tambahan</p><p class="text-xs text-neutral-400 mt-1">Bisa pilih lebih dari satu file</p>';
+                tampilLangkah(1);
+                halaman.beranda.classList.add('active');
+                halaman.pengajuan.classList.remove('active');
+                document.querySelectorAll('[data-page]').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-page="beranda"]').classList.add('active');
+            }, 1500);
+        });
+
+        // Cek Status
+        document.getElementById('btnCek').addEventListener('click', () => {
+            const no = document.getElementById('noPengajuan').value.trim();
+            const hasil = document.getElementById('hasilStatus');
+            if (!no) return hasil.innerHTML = '<span class="text-red-500">Masukkan nomor pengajuan!</span>';
+            hasil.innerHTML = `
+                <div class="text-left p-3 bg-neutral-50 rounded-lg">
+                    <p class="font-medium">${no}</p>
+                    <p class="text-yellow-600 mt-1"><i class="fa fa-clock-o mr-1"></i> Menunggu Verifikasi RT/RW</p>
+                    <p class="text-xs text-neutral-400 mt-2">Status ini contoh • Data akan muncul otomatis setelah Supabase terhubung</p>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
