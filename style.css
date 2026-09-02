@@ -1,19 +1,86 @@
+/* === NAVIGASI === */
 .nav-link {
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
     font-size: 0.9375rem;
     font-weight: 500;
     transition: all 0.2s;
-    text-decoration: none;
-    color: #374151;
 }
 .nav-link:hover {
     background-color: rgba(59, 130, 246, 0.1);
-    color: #2563eb;
+    color: rgb(37, 99, 235);
 }
 .nav-link.active {
     background-color: rgba(59, 130, 246, 0.1);
-    color: #2563eb;
+    color: rgb(37, 99, 235);
     font-weight: 600;
 }
+
+/* === HALAMAN TERSembUNYI === */
 .page-content.hidden { display: none; }
+
+/* === ZONE UPLOAD === */
+.file-zone {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+.file-zone:hover {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.03);
+}
+
+/* === PDF LAYOUT === */
+.pdf-surat {
+    font-family: 'Inter', sans-serif;
+    color: #000;
+    line-height: 1.6;
+}
+.pdf-surat .kop {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+.pdf-surat .kop h2 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: bold;
+}
+.pdf-surat .isi { font-size: 0.875rem; }
+.pdf-surat .isi table {
+    width: 100%;
+    margin: 0.75rem 0;
+    border-collapse: collapse;
+}
+.pdf-surat .isi table td {
+    padding: 0.25rem 0;
+    vertical-align: top;
+}
+.pdf-surat .isi table td:first-child {
+    width: 140px;
+    font-weight: 600;
+}
+.pdf-surat .ttd {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: space-between;
+}
+.pdf-surat .ttd-box {
+    text-align: center;
+    width: 160px;
+}
+.pdf-surat .ttd-img { height: 60px; margin: 4px 0; }
+.pdf-surat .no-surat {
+    text-align: right;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* === LANGKAH FORMULIR === */
+.langkah-aktif { background-color: #2563eb; color: white; }
+.langkah-selesai { background-color: #16a34a; color: white; }
+.langkah-biasa { background-color: #e5e7eb; color: #6b7280; }
